@@ -13,7 +13,7 @@ fn main()
     for x in 0..w {
         for y in 0..h
         {
-            if y > h/3 && y < 2*h/3
+            if y > h/3 && y <= 2*h/3
             {
                 image.set_pixel(x, y, GREEN);
             }
