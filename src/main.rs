@@ -1,5 +1,7 @@
-mod ppm;
-use ppm::{ImagePPM, vec3::Vec3};
+mod utils;
+
+use utils::ppm::ImagePPM;
+use utils::vec3::Vec3;
 
 //const GREEN :RGB = RGB{ r:0.0, g:1.0, b:0.0 };
 //const BLUE  :RGB = RGB{ r:0.0, g:0.0, b:1.0 };

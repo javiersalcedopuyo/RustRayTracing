@@ -2,8 +2,7 @@ use std::path::Path;
 use std::io::Write;
 use std::fs::File;
 
-#[path = "vec3.rs"] pub mod vec3;
-use vec3::Vec3;
+use super::vec3::Vec3;
 
 pub struct ImagePPM
 {
