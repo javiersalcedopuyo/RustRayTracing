@@ -8,7 +8,8 @@ pub struct Vec3
 
 impl Vec3
 {
-    pub fn new() -> Self { Self{data: [0.0, 0.0, 0.0]} }
+    pub fn new() -> Self { Self{ data: [0.0, 0.0, 0.0] } }
+    pub fn init(x: f32, y: f32, z: f32) -> Self { Self{ data: [x,y,z] } }
 
     pub fn set(&mut self, x: f32, y: f32, z: f32)
     {
@@ -23,6 +24,35 @@ impl Vec3
     pub fn x(&self) -> f32 { self.data[0] }
     pub fn y(&self) -> f32 { self.data[1] }
     pub fn z(&self) -> f32 { self.data[2] }
+
+    pub fn dot(&self, other: Self) -> f32
+    {
+        return self.x() * other.x() + self.y() * other.y() + self.z() * other.z();
+    }
+
+    pub fn cross(&self, other: Self) -> Self
+    {
+        let x = self.x() * other.x();
+        let y = self.y() * other.y();
+        let z = self.z() * other.z();
+
+        return Self{ data:[x,y,z] };
+    }
+
+    pub fn norm2(&self) -> f32
+    {
+        return self.x() * self.x() + self.y() * self.y() + self.z() * self.z();
+    }
+
+    pub fn norm(&self) -> f32 { return self.norm2().sqrt(); }
+    pub fn normalized(&self) -> Self { return *self / self.norm(); }
+
+    pub fn lerp(a: Self, b: Self, t: f32) -> Self
+    {
+        if      t >= 1.0 { return b; }
+        else if t <= 0.0 { return a; }
+        else             { return a * (1.0-t) + b * t;}
+    }
 }
 
 impl Add for Vec3

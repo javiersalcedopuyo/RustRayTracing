@@ -2,13 +2,15 @@ use std::path::Path;
 use std::io::Write;
 use std::fs::File;
 
+use std::vec::Vec as List;
+
 use super::vec3::Vec3;
 
 pub struct ImagePPM
 {
     pub width:  u32,
     pub height: u32,
-    pub pixels: Vec<Vec3>
+    pub pixels: List<Vec3>
 }
 
 impl ImagePPM
