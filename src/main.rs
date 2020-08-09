@@ -1,45 +1,28 @@
 mod utils;
 mod ray;
 mod camera;
+mod hittables;
 
 use utils::ppm::ImagePPM;
 use utils::vec3::Vec3;
 use ray::Ray;
 use camera::Camera;
+use hittables::hittable::Hittable;
+use hittables::sphere::Sphere;
 
-use std::time::{Duration, Instant};
-
-fn hit_sphere(center: Vec3, radius: f32, ray: &Ray) -> f32
-{
-    let oc = ray.origin - center;
-
-    // (R(t)-C)(R(t)-C) = r^2
-    // R(t) = O + Dt
-    // (O+Dt-c)(O+Dt-C) = r^2
-    // D·Dt^2 + 2D·(O-C)t + (O-C)·(O-C) - r^2 = 0
-
-    let a = ray.direction.dot( ray.direction );
-    let b = ray.direction.dot(oc) * 2.0;
-    let c = oc.dot(oc) - radius*radius;
-
-    let discriminant = b*b - 4.0*a*c;
-
-    if discriminant < 0.0 {
-        return -1.0;
-    } else {
-        return (-b - discriminant.sqrt()) / (2.0 * a);
-    }
-}
+use std::time::Instant;
 
 fn compute_ray(ray: Ray) -> Vec3
 {
-    let sphere_center = Vec3::init(0.0, 0.0, -1.0);
-    let t = hit_sphere(sphere_center, 0.4, &ray);
+    let sphere = Sphere::init(0.4, Vec3::init(0.0, 0.0, -1.0));
+    let hit    = sphere.hit(&ray, 0.0, 10.0);
 
-    if t > 0.0 {
-        let n = (ray.at(t) - sphere_center).normalized();
-        return Vec3::init(n.x()+1.0, n.y()+1.0, n.z()+1.0) * 0.5;
+    if hit.distance > 0.0
+    {
+        let n = hit.normal;
+        return Vec3::init(n.x() + 1.0, n.y() + 1.0, n.z() + 1.0) * 0.5;
     }
+
     let dir = ray.direction.normalized();
     let t   = 0.5 * (dir.y() + 1.0);
 

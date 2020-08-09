@@ -11,12 +11,12 @@ impl Vec3
     pub fn new() -> Self { Self{ data: [0.0, 0.0, 0.0] } }
     pub fn init(x: f32, y: f32, z: f32) -> Self { Self{ data: [x,y,z] } }
 
-    pub fn set(&mut self, x: f32, y: f32, z: f32)
-    {
-        self.data[0] = x;
-        self.data[1] = y;
-        self.data[2] = z;
-    }
+    //pub fn set(&mut self, x: f32, y: f32, z: f32)
+    //{
+    //    self.data[0] = x;
+    //    self.data[1] = y;
+    //    self.data[2] = z;
+    //}
 
     pub fn r(&self) -> f32 { self.data[0] }
     pub fn g(&self) -> f32 { self.data[1] }
@@ -30,14 +30,7 @@ impl Vec3
         return self.x() * other.x() + self.y() * other.y() + self.z() * other.z();
     }
 
-    pub fn cross(&self, other: Self) -> Self
-    {
-        let x = self.x() * other.x();
-        let y = self.y() * other.y();
-        let z = self.z() * other.z();
-
-        return Self{ data:[x,y,z] };
-    }
+    // TODO: pub fn cross(&self, other: Self) -> Self
 
     pub fn norm2(&self) -> f32
     {
