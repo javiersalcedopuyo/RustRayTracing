@@ -36,16 +36,30 @@ impl Hittable for Sphere
 
         let discriminant = b*b - 4.0*a*c;
 
-        let dist = if discriminant < 0.0 { -1.0 }
-                   else { (-b - discriminant.sqrt()) / (2.0 * a) };
+        if discriminant < 0.0 { return HitRecord::null_hit(); }
 
-        let pos  = i_ray.at(dist);
+        let mut distance   = (-b - discriminant.sqrt()) / (2.0 * a) ;
 
-        return HitRecord
+        if distance <= i_max_d && distance >= i_min_d
         {
-            distance: if dist >= i_min_d && dist <= i_max_d { dist } else { -1.0 },
-            position: pos,
-            normal:   self.get_normal(pos)
-        };
+            let position   = i_ray.at(distance);
+            let normal     = self.get_normal(position);
+            let front_face = HitRecord::is_front_face(i_ray, normal);
+
+            return HitRecord { distance, position, normal, front_face };
+        }
+
+        distance = (-b - discriminant.sqrt()) / (2.0 * a) ;
+
+        if distance <= i_max_d && distance >= i_min_d
+        {
+            let position   = i_ray.at(distance);
+            let normal     = self.get_normal(position);
+            let front_face = HitRecord::is_front_face(i_ray, normal);
+
+            return HitRecord { distance, position, normal, front_face };
+        }
+
+        return HitRecord::null_hit();
     }
 }

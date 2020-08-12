@@ -14,26 +14,26 @@ use std::time::Instant;
 
 fn compute_ray(ray: Ray) -> Vec3
 {
-    let sphere = Sphere::init(0.4, Vec3::init(0.0, 0.0, -1.0));
+    let sphere = Sphere::init(0.4, Vec3::new(0.0, 0.0, -1.0));
     let hit    = sphere.hit(&ray, 0.0, 10.0);
 
-    if hit.distance > 0.0
+    if !hit.is_null()
     {
         let n = hit.normal;
-        return Vec3::init(n.x() + 1.0, n.y() + 1.0, n.z() + 1.0) * 0.5;
+        return Vec3::new(n.x() + 1.0, n.y() + 1.0, n.z() + 1.0) * 0.5;
     }
 
     let dir = ray.direction.normalized();
     let t   = 0.5 * (dir.y() + 1.0);
 
-    return Vec3::lerp(Vec3::init(0.0, 0.4, 1.0), Vec3::init(1.0, 1.0, 1.0), t);
+    return Vec3::lerp(Vec3::new(0.0, 0.4, 1.0), Vec3::new(1.0, 1.0, 1.0), t);
 }
 
 fn main()
 {
     let w = 800;
     let h = 600;
-    let mut image  = ImagePPM::new_filled(w, h, Vec3::new());
+    let mut image  = ImagePPM::new_filled(w, h, Vec3::zero());
     let mut camera = Camera::new();
 
     let aspect_ratio = (w as f32) / (h as f32);

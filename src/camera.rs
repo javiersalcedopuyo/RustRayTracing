@@ -29,10 +29,10 @@ impl Camera
         {
             focal_len : 1.0,
             viewport  : Rect::new(1.0, 1.0),
-            origin    : Vec3::new(),
-            forward   : Vec3::init(0.0, 0.0, 1.0),
-            up        : Vec3::init(0.0, 1.0, 0.0),
-            left      : Vec3::init(-1.0, 0.0, 0.0)
+            origin    : Vec3::zero(),
+            forward   : Vec3::new(0.0, 0.0, 1.0),
+            up        : Vec3::new(0.0, 1.0, 0.0),
+            left      : Vec3::new(-1.0, 0.0, 0.0)
         }
     }
 

@@ -1,4 +1,4 @@
-use std::ops::{ Add, Mul, Div, Sub };
+use std::ops::{ Add, Mul, Div, Sub, Neg };
 
 #[derive(Copy, Clone, Debug)]
 pub struct Vec3
@@ -8,8 +8,8 @@ pub struct Vec3
 
 impl Vec3
 {
-    pub fn new() -> Self { Self{ data: [0.0, 0.0, 0.0] } }
-    pub fn init(x: f32, y: f32, z: f32) -> Self { Self{ data: [x,y,z] } }
+    pub fn zero() -> Self { Self{ data: [0.0, 0.0, 0.0] } }
+    pub fn new(x: f32, y: f32, z: f32) -> Self { Self{ data: [x,y,z] } }
 
     //pub fn set(&mut self, x: f32, y: f32, z: f32)
     //{
@@ -95,3 +95,20 @@ impl Div<f32> for Vec3
     type Output = Vec3;
     fn div(self, val: f32) -> Vec3 { self * (1.0/val) }
 }
+
+impl Neg for Vec3
+{
+    type Output = Vec3;
+    fn neg(self) -> Vec3 { Vec3::new(-self.x(), -self.y(), -self.z()) }
+}
+
+impl PartialEq for Vec3
+{
+    fn eq(&self, other: &Vec3) -> bool
+    {
+        self.x() == other.x() &&
+        self.y() == other.y() &&
+        self.z() == other.z()
+    }
+}
+impl Eq for Vec3 {}
