@@ -8,22 +8,32 @@ use utils::vec3::Vec3;
 use ray::Ray;
 use camera::Camera;
 use hittables::hittable::Hittable;
+use hittables::hittable::HitRecord;
 use hittables::sphere::Sphere;
 
 use std::time::Instant;
 
-fn compute_ray(ray: Ray) -> Vec3
+fn compute_ray(i_ray: Ray, i_scene: &Vec<Box<dyn Hittable>>) -> Vec3
 {
-    let sphere = Sphere::init(0.4, Vec3::new(0.0, 0.0, -1.0));
-    let hit    = sphere.hit(&ray, 0.0, 10.0);
-
-    if !hit.is_null()
+    let mut closest_hit: Option<HitRecord> = None;
+    for obj in i_scene
     {
-        let n = hit.normal;
+        let hit = obj.hit(&i_ray, 0.0, 10.0);
+
+        if hit.is_some() &&
+           (closest_hit.is_none() || hit.unwrap().distance < closest_hit.unwrap().distance)
+        {
+            closest_hit = hit;
+        }
+    }
+
+    if closest_hit.is_some()
+    {
+        let n = closest_hit.unwrap().normal;
         return Vec3::new(n.x() + 1.0, n.y() + 1.0, n.z() + 1.0) * 0.5;
     }
 
-    let dir = ray.direction.normalized();
+    let dir = i_ray.direction.normalized();
     let t   = 0.5 * (dir.y() + 1.0);
 
     return Vec3::lerp(Vec3::new(0.0, 0.4, 1.0), Vec3::new(1.0, 1.0, 1.0), t);
@@ -38,6 +48,10 @@ fn main()
 
     let aspect_ratio = (w as f32) / (h as f32);
     camera.resize(2.0*aspect_ratio, 2.0);
+
+    let mut scene: Vec<Box<dyn Hittable>> = Vec::new();
+    scene.push(Box::new(Sphere::init(0.3,   Vec3::new(0.0, 0.0, -1.0))));
+    scene.push(Box::new(Sphere::init(100.0, Vec3::new(0.0,101.5, -1.0))));
 
     let start = Instant::now();
     for y in 0..h
@@ -59,7 +73,7 @@ fn main()
             let pixel_pos = lower_left_corner + hrz*u + vrt*v;
 
             let ray   = Ray::new(camera.origin, pixel_pos - camera.origin);
-            let color = compute_ray(ray);
+            let color = compute_ray(ray, &scene);
 
             image.set_pixel(x, y, color);
         }
