@@ -50,8 +50,8 @@ fn main()
     camera.resize(2.0*aspect_ratio, 2.0);
 
     let mut scene: Vec<Box<dyn Hittable>> = Vec::new();
-    scene.push(Box::new(Sphere::init(0.3,   Vec3::new(0.0, 0.0, -1.0))));
-    scene.push(Box::new(Sphere::init(100.0, Vec3::new(0.0,101.5, -1.0))));
+    scene.push(Box::new(Sphere::init(0.3,   Vec3::new(0.0, 0.0, 1.0))));
+    scene.push(Box::new(Sphere::init(100.0, Vec3::new(0.0,-100.5, 1.0))));
 
     let start = Instant::now();
     for y in 0..h
@@ -61,19 +61,11 @@ fn main()
 
         for x in 0..w
         {
-            let u = (x as f32) / (w-1) as f32;
-            let v = (y as f32) / (h-1) as f32;
+            // NOTE: 0,0 is lower left
+            let u = x as f32 / (w-1) as f32;
+            let v = (h-y) as f32 / (h-1) as f32;
 
-            let hrz = camera.left    * camera.viewport.width;
-            let vrt = camera.up      * camera.viewport.height;
-            let dpt = camera.forward * camera.focal_len;
-
-            let lower_left_corner = camera.origin - hrz*0.5 - vrt*0.5 - dpt;
-
-            let pixel_pos = lower_left_corner + hrz*u + vrt*v;
-
-            let ray   = Ray::new(camera.origin, pixel_pos - camera.origin);
-            let color = compute_ray(ray, &scene);
+            let color = compute_ray(camera.get_ray(u, v), &scene);
 
             image.set_pixel(x, y, color);
         }
