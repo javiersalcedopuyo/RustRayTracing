@@ -3,6 +3,7 @@ mod ray;
 mod camera;
 mod hittables;
 
+use rand::random;
 use utils::ppm::ImagePPM;
 use utils::vec3::Vec3;
 use ray::Ray;
@@ -45,6 +46,7 @@ fn main()
     let h = 600;
     let mut image  = ImagePPM::new_filled(w, h, Vec3::zero());
     let mut camera = Camera::new();
+    let sample_count = 4;
 
     let aspect_ratio = (w as f32) / (h as f32);
     camera.resize(2.0*aspect_ratio, 2.0);
@@ -61,13 +63,19 @@ fn main()
 
         for x in 0..w
         {
-            // NOTE: 0,0 is lower left
-            let u = x as f32 / (w-1) as f32;
-            let v = (h-y) as f32 / (h-1) as f32;
+            let mut color = Vec3::zero();
+            for _ in 0..sample_count
+            {
+                let offset = if sample_count > 1 { random::<f32>() } else { 0.0 };
+                // NOTE: 0,0 is lower left
+                let u = (x as f32 + offset) / (w-1) as f32;
+                let v = ((h-y) as f32 + offset) / (h-1) as f32;
 
-            let color = compute_ray(camera.get_ray(u, v), &scene);
+                color += compute_ray(camera.get_ray(u, v), &scene);
+            }
 
-            image.set_pixel(x, y, color);
+            let scale = 1.0 / sample_count as f32;
+            image.set_pixel(x, y, color*scale);
         }
     }
     println!("RENDER TIME: {} ms", start.elapsed().as_millis());
