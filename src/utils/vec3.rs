@@ -1,4 +1,4 @@
-use std::ops::{ Add, AddAssign, Mul, Div, Sub, Neg };
+use std::ops::{ Add, AddAssign, Mul, MulAssign, Div, Sub, Neg };
 
 #[derive(Copy, Clone, Debug)]
 pub struct Vec3
@@ -45,6 +45,24 @@ impl Vec3
         if      t >= 1.0 { return b; }
         else if t <= 0.0 { return a; }
         else             { return a * (1.0-t) + b * t;}
+    }
+
+    pub fn rand(min: f32, max: f32) -> Self
+    {
+        let x = min + rand::random::<f32>() * (max-min);
+        let y = min + rand::random::<f32>() * (max-min);
+        let z = min + rand::random::<f32>() * (max-min);
+
+        return Vec3::new(x,y,z);
+    }
+
+    pub fn sqrt(&self) -> Self
+    {
+        let x = self.x().sqrt();
+        let y = self.y().sqrt();
+        let z = self.z().sqrt();
+
+        return Vec3::new(x,y,z);
     }
 }
 
@@ -93,6 +111,11 @@ impl Mul<f32> for Vec3
             self.z() * val
         ]}
     }
+}
+
+impl MulAssign<f32> for Vec3
+{
+    fn mul_assign(&mut self, val: f32) { *self = *self * val; }
 }
 
 impl Div<f32> for Vec3

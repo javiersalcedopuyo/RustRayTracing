@@ -14,8 +14,10 @@ use hittables::sphere::Sphere;
 
 use std::time::Instant;
 
-fn compute_ray(i_ray: Ray, i_scene: &Vec<Box<dyn Hittable>>) -> Vec3
+fn compute_ray(i_ray: Ray, i_scene: &Vec<Box<dyn Hittable>>, i_depth: i32) -> Vec3
 {
+    if i_depth <= 0 { return Vec3::zero(); }
+
     let mut closest_hit: Option<HitRecord> = None;
     for obj in i_scene
     {
@@ -30,8 +32,9 @@ fn compute_ray(i_ray: Ray, i_scene: &Vec<Box<dyn Hittable>>) -> Vec3
 
     if closest_hit.is_some()
     {
-        let n = closest_hit.unwrap().normal;
-        return Vec3::new(n.x() + 1.0, n.y() + 1.0, n.z() + 1.0) * 0.5;
+        let hit    = closest_hit.unwrap();
+        let target = hit.position + hit.normal + utils::rand_point_in_unit_sphere();
+        return compute_ray(Ray::new(hit.position, target-hit.position), i_scene, i_depth-1) * 0.5;
     }
 
     let dir = i_ray.direction.normalized();
@@ -47,6 +50,7 @@ fn main()
     let mut image  = ImagePPM::new_filled(w, h, Vec3::zero());
     let mut camera = Camera::new();
     let sample_count = 4;
+    let max_depth    = 50;
 
     let aspect_ratio = (w as f32) / (h as f32);
     camera.resize(2.0*aspect_ratio, 2.0);
@@ -71,11 +75,12 @@ fn main()
                 let u = (x as f32 + offset) / (w-1) as f32;
                 let v = ((h-y) as f32 + offset) / (h-1) as f32;
 
-                color += compute_ray(camera.get_ray(u, v), &scene);
+                color += compute_ray(camera.get_ray(u, v), &scene, max_depth);
             }
 
-            let scale = 1.0 / sample_count as f32;
-            image.set_pixel(x, y, color*scale);
+            // Gamma2 correction
+            color = (color * (1.0 / sample_count as f32)).sqrt();
+            image.set_pixel(x, y, color);
         }
     }
     println!("RENDER TIME: {} ms", start.elapsed().as_millis());
