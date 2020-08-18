@@ -33,7 +33,8 @@ fn compute_ray(i_ray: Ray, i_scene: &Vec<Box<dyn Hittable>>, i_depth: i32) -> Ve
     if closest_hit.is_some()
     {
         let hit    = closest_hit.unwrap();
-        let target = hit.position + hit.normal + utils::rand_point_in_unit_sphere();
+        //let target = hit.position + hit.normal + utils::rand_point_in_unit_sphere();
+        let target = hit.position + utils::rand_point_in_unit_hemisphere(hit.normal);
         return compute_ray(Ray::new(hit.position, target-hit.position), i_scene, i_depth-1) * 0.5;
     }
 
@@ -49,7 +50,7 @@ fn main()
     let h = 600;
     let mut image  = ImagePPM::new_filled(w, h, Vec3::zero());
     let mut camera = Camera::new();
-    let sample_count = 4;
+    let sample_count = 100;
     let max_depth    = 50;
 
     let aspect_ratio = (w as f32) / (h as f32);
