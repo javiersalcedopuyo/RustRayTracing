@@ -25,9 +25,3 @@ impl Default for HitRecord
         Self { front_face: false, distance: 0.0, position: Vec3::zero(), normal: Vec3::zero() }
     }
 }
-
-pub trait Hittable
-{
-    fn hit(&self, i_ray: &Ray, i_min_d: f32, i_max_d: f32) -> Option<HitRecord>;
-    fn get_normal_at(&self, i_pos: Vec3) -> Vec3;
-}

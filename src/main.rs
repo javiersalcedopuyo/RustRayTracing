@@ -8,13 +8,14 @@ use utils::ppm::ImagePPM;
 use utils::vec3::Vec3;
 use ray::Ray;
 use camera::Camera;
-use hittables::hittable::Hittable;
-use hittables::hittable::HitRecord;
+use hittables::Hittables;
+use hittables::hit_record::HitRecord;
+use hittables::Hittable;
 use hittables::sphere::Sphere;
 
 use std::time::Instant;
 
-fn compute_ray(i_ray: Ray, i_scene: &Vec<Box<dyn Hittable>>, i_depth: i32) -> Vec3
+fn compute_ray(i_ray: Ray, i_scene: &Vec<Hittables>, i_depth: i32) -> Vec3
 {
     if i_depth <= 0 { return Vec3::zero(); }
 
@@ -56,9 +57,9 @@ fn main()
     let aspect_ratio = (w as f32) / (h as f32);
     camera.resize(2.0*aspect_ratio, 2.0);
 
-    let mut scene: Vec<Box<dyn Hittable>> = Vec::new();
-    scene.push(Box::new(Sphere::init(0.3,   Vec3::new(0.0, 0.0, 1.0))));
-    scene.push(Box::new(Sphere::init(100.0, Vec3::new(0.0,-100.5, 1.0))));
+    let mut scene: Vec<Hittables> = Vec::new();
+    scene.push( Hittables::Sphere(Sphere::init(0.3,   Vec3::new(0.0, 0.0, 1.0))) );
+    scene.push( Hittables::Sphere(Sphere::init(100.0, Vec3::new(0.0,-100.5, 1.0))) );
 
     let start = Instant::now();
     for y in 0..h

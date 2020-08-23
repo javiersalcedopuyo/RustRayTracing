@@ -1,6 +1,7 @@
 use super::super::utils::vec3::Vec3;
 use super::super::ray::Ray;
-use super::hittable::{HitRecord, Hittable};
+use super::hit_record::HitRecord;
+use super::Hittable;
 
 #[derive(Copy, Clone, Debug)]
 pub struct Sphere
