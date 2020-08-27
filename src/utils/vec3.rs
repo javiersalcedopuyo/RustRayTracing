@@ -1,4 +1,5 @@
 use std::ops::{ Add, AddAssign, Mul, MulAssign, Div, Sub, Neg };
+use super::TAU;
 
 #[derive(Copy, Clone, Debug)]
 pub struct Vec3
@@ -9,6 +10,8 @@ pub struct Vec3
 impl Vec3
 {
     pub fn zero() -> Self { Self{ data: [0.0, 0.0, 0.0] } }
+    pub fn one()  -> Self { Self{ data: [1.0, 1.0, 1.0] } }
+    pub fn debug_color() -> Self { Self{ data: [1.0, 0.0, 1.0] } }
     pub fn new(x: f32, y: f32, z: f32) -> Self { Self{ data: [x,y,z] } }
 
     //pub fn set(&mut self, x: f32, y: f32, z: f32)
@@ -54,6 +57,15 @@ impl Vec3
         let z = min + rand::random::<f32>() * (max-min);
 
         return Vec3::new(x,y,z);
+    }
+
+    pub fn rand_unit() -> Self
+    {
+        let a = rand::random::<f32>() * (TAU);
+        let z = -1.0 + rand::random::<f32>() * 2.0;
+        let r = (1.0 - z*z).sqrt();
+
+        return Vec3::new(r*a.cos(), r*a.sin(), z);
     }
 
     pub fn sqrt(&self) -> Self
@@ -109,6 +121,20 @@ impl Mul<f32> for Vec3
             self.x() * val,
             self.y() * val,
             self.z() * val
+        ]}
+    }
+}
+
+impl Mul<Vec3> for Vec3
+{
+    type Output = Vec3;
+    fn mul(self, val: Vec3) -> Vec3
+    {
+        Vec3 { data:
+        [
+            self.x() * val.x(),
+            self.y() * val.y(),
+            self.z() * val.z()
         ]}
     }
 }

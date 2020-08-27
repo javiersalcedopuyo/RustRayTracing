@@ -1,13 +1,15 @@
 use super::super::utils::vec3::Vec3;
 use super::super::ray::Ray;
+use super::super::materials::Material;
 
-#[derive(Copy, Clone, Debug)]
+#[derive(Clone, Debug)]
 pub struct HitRecord
 {
     pub front_face: bool,
     pub distance:   f32,
     pub position:   Vec3,
     pub normal:     Vec3,
+    pub p_material: std::rc::Rc<dyn Material>
 }
 
 impl HitRecord
@@ -15,13 +17,5 @@ impl HitRecord
     pub fn is_front_face(i_ray: &Ray, i_outward_norm: Vec3) -> bool
     {
         return i_ray.direction.dot( i_outward_norm ) < 0.0;
-    }
-}
-
-impl Default for HitRecord
-{
-    fn default() -> Self
-    {
-        Self { front_face: false, distance: 0.0, position: Vec3::zero(), normal: Vec3::zero() }
     }
 }

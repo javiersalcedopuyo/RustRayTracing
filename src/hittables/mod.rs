@@ -12,20 +12,19 @@ pub trait Hittable
     fn get_normal_at(&self, i_pos: Vec3) -> Vec3;
 }
 
-pub enum Hittables
+pub enum Intersectionable
 {
     Sphere( sphere::Sphere ),
-    Cube // TODO
+    // TODO: Other surfaces
 }
 
-impl Hittable for Hittables
+impl Hittable for Intersectionable
 {
     fn hit(&self, i_ray: &Ray, i_min_d: f32, i_max_d: f32) -> Option<HitRecord>
     {
         match self
         {
             Self::Sphere(s) => s.hit(i_ray, i_min_d, i_max_d),
-            _ => None
         }
     }
 
@@ -34,7 +33,6 @@ impl Hittable for Hittables
         match self
         {
             Self::Sphere(s) => s.get_normal_at(i_pos),
-            _ => Vec3::zero()
         }
     }
 }

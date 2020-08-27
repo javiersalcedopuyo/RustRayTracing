@@ -3,9 +3,14 @@ pub mod vec3;
 
 use vec3::Vec3;
 
-//const PI: f32 = 3.1415926535897932385;
-//pub fn degrees_to_radians(i_degrees: f32) -> f32 { i_degrees * PI / 180.0 }
+#[allow(dead_code)]
+const PI:  f32 = 3.1415926535897932385;
+#[allow(dead_code)]
+const TAU: f32 = 6.2831853071;
+#[allow(dead_code)]
+pub fn degrees_to_radians(i_degrees: f32) -> f32 { i_degrees * PI / 180.0 }
 
+#[allow(dead_code)]
 pub fn rand_point_in_unit_sphere() -> Vec3
 {
     loop
@@ -16,6 +21,7 @@ pub fn rand_point_in_unit_sphere() -> Vec3
     }
 }
 
+#[allow(dead_code)]
 pub fn rand_point_in_unit_hemisphere(i_normal: Vec3) -> Vec3
 {
     let point_in_sphere = rand_point_in_unit_sphere();

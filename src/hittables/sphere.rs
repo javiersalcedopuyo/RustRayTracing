@@ -1,18 +1,24 @@
 use super::super::utils::vec3::Vec3;
+use super::super::materials::Material;
 use super::super::ray::Ray;
 use super::hit_record::HitRecord;
 use super::Hittable;
 
-#[derive(Copy, Clone, Debug)]
+use std::rc::Rc; // It's like C++'s shared_ptr
+
+#[derive(Clone, Debug)]
 pub struct Sphere
 {
     pub radius: f32,
-    pub center: Vec3
+    pub center: Vec3,
+    pub p_material: Rc<dyn Material>
 }
 
 impl Sphere
 {
-    pub fn init(radius: f32, center: Vec3) -> Self { Self { radius, center } }
+    pub fn new(radius: f32, center: Vec3, p_material: Rc<dyn Material>) -> Self {
+        Self { radius, center, p_material }
+    }
 }
 
 impl Hittable for Sphere
@@ -46,8 +52,9 @@ impl Hittable for Sphere
             let position   = i_ray.at(distance);
             let normal     = self.get_normal_at(position);
             let front_face = HitRecord::is_front_face(i_ray, normal);
+            let p_material = self.p_material.clone();
 
-            return Some(HitRecord { distance, position, normal, front_face });
+            return Some(HitRecord { distance, position, normal, front_face, p_material });
         }
 
         distance = (-b - discriminant.sqrt()) / (2.0 * a) ;
@@ -57,8 +64,9 @@ impl Hittable for Sphere
             let position   = i_ray.at(distance);
             let normal     = self.get_normal_at(position);
             let front_face = HitRecord::is_front_face(i_ray, normal);
+            let p_material = self.p_material.clone();
 
-            return Some(HitRecord { distance, position, normal, front_face });
+            return Some(HitRecord { distance, position, normal, front_face, p_material });
         }
 
         return None
