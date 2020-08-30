@@ -1,6 +1,7 @@
 pub mod debug;
 pub mod metallic;
 pub mod lambertian;
+pub mod dielectric;
 
 use super::ray::Ray;
 use super::utils::vec3::Vec3;

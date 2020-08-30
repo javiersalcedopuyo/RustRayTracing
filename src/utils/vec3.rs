@@ -76,6 +76,20 @@ impl Vec3
 
         return Vec3::new(x,y,z);
     }
+
+    pub fn reflect(&self, n: Vec3) -> Vec3
+    {
+        return *self - n * self.dot(n) * 2.0;
+    }
+
+    pub fn refract(&self, n: Vec3, eta: f32) -> Vec3
+    {
+        let cos_theta    = (-*self).dot(n);
+        let r_orthogonal = (*self + n * cos_theta) * eta;
+        let r_parallel   = n * -(1.0 - r_orthogonal.norm2()).abs().sqrt();
+
+        return r_orthogonal + r_parallel;
+    }
 }
 
 impl Add for Vec3
