@@ -33,7 +33,15 @@ impl Vec3
         return self.x() * other.x() + self.y() * other.y() + self.z() * other.z();
     }
 
-    // TODO: pub fn cross(&self, other: Self) -> Self
+    pub fn cross(&self, other: Self) -> Self
+    {
+        Self{ data:
+        [
+            self.y() * other.z() - self.z() * other.y(),
+            self.z() * other.x() - self.x() * other.z(),
+            self.x() * other.y() - self.y() * other.x()
+        ]}
+    }
 
     pub fn norm2(&self) -> f32
     {

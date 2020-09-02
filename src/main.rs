@@ -76,22 +76,29 @@ fn main()
 #[cfg(not(debug_assertions))]
     let sample_count = 64;
 
-    let mut image    = ImagePPM::new_filled(w, h, Vec3::zero());
-    let mut camera   = Camera::new();
+    let camera_aspect_ratio = (w as f32) / (h as f32);
+    let camera_fov          = 90.0;
+    let camera_aperture     = 2.0;
+    let camera_target       = Vec3::new(0.0, 0.0, 1.0);
+    let camera_pos          = Vec3::new(0.0, 0.0, -1.0);
+    let camera_focus_dist   = (camera_pos - camera_target).norm();
 
-    let aspect_ratio = (w as f32) / (h as f32);
-    camera.resize(2.0*aspect_ratio, 2.0);
+    let mut image  = ImagePPM::new_filled(w, h, Vec3::zero());
+    let mut camera = Camera::new(camera_fov, camera_aspect_ratio, camera_aperture, camera_focus_dist);
+
+    camera.move_to( camera_pos );
+    camera.look_at( camera_target );
 
     let materials: Vec<Rc<dyn Material>> = vec![Rc::new(DebugMat{}),
                                                 Rc::new(LambertianMat{ albedo: Vec3::new(0.0, 0.0, 1.0) }),
-                                                Rc::new(DielectricMat::new(1.5, Vec3::new(1.0, 0.0, 0.0))),
-                                                Rc::new(MetallicMat::new(0.1, Vec3::new(0.0, 1.0, 0.0))),
+                                                Rc::new(DielectricMat::new(1.5, Vec3::new(0.0, 1.0, 0.0))),
+                                                Rc::new(MetallicMat::new(0.1, Vec3::new(1.0, 0.0, 0.0))),
                                                 Rc::new(LambertianMat{ albedo: Vec3::new(0.75, 0.75, 0.75) })];
 
     let mut scene: Vec<Intersectionable> = Vec::new();
-    scene.push( Intersectionable::Sphere( Sphere::new(0.5,   Vec3::new(-1.0, 0.0, 1.5),   materials[2].clone()) ) );
-    scene.push( Intersectionable::Sphere( Sphere::new(0.5,   Vec3::new(0.0, 0.0, 1.5),   materials[3].clone()) ) );
-    scene.push( Intersectionable::Sphere( Sphere::new(0.5,   Vec3::new(1.0, 0.0, 1.5),   materials[1].clone()) ) );
+    scene.push( Intersectionable::Sphere( Sphere::new(0.5,   Vec3::new(-1.0, 0.0, 1.0),  materials[3].clone()) ) );
+    scene.push( Intersectionable::Sphere( Sphere::new(0.5,   Vec3::new(0.0, 0.0, 1.0),   materials[2].clone()) ) );
+    scene.push( Intersectionable::Sphere( Sphere::new(0.5,   Vec3::new(1.0, 0.0, 1.0),   materials[1].clone()) ) );
     scene.push( Intersectionable::Sphere( Sphere::new(100.0, Vec3::new(0.0,-100.5, 1.0), materials[4].clone()) ) );
 
     let start = Instant::now();
