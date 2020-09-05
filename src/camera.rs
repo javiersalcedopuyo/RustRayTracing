@@ -58,7 +58,7 @@ impl Camera
         let look_dir = (target - self.origin).normalized();
 
         self.forward = look_dir;
-        self.left = Vec3::new(0.0, 1.0, 0.0)
+        self.left = Vec3::new(0.0, 1.0, 0.0) // World's UP
                         .cross(look_dir)
                         .normalized();
 
@@ -75,21 +75,22 @@ impl Camera
 
     pub fn get_ray(&self, u: f32, v: f32) -> Ray
     {
-        let hrz       = self.left * self.viewport.width;
-        let vrt       = self.up   * self.viewport.height;
+        let hrz       = self.left * self.viewport.width  * self.focus_dist;
+        let vrt       = self.up   * self.viewport.height * self.focus_dist;
         let pixel_pos = self.lower_left_corner + (hrz*u + vrt*v);
 
-        //let rd     = utils::rand_point_in_unit_disk() * self.lens_radius ;
-        //let offset = self.left * rd.x() + self.up * rd.y();
+        let rand_dir = utils::rand_point_in_unit_disk() * self.lens_radius ;
+        let offset   = self.left * rand_dir.x() + self.up * rand_dir.y();
+        let origin   = self.origin + offset;
 
-        return Ray::new(self.origin, pixel_pos - self.origin);
+        return Ray::new(origin, pixel_pos - origin);
     }
 
     fn recalculate_lower_left_corner(&mut self)
     {
-        let hrz = self.left    * self.viewport.width;
-        let vrt = self.up      * self.viewport.height;
-        let dpt = self.forward * self.focal_len;
+        let hrz = self.left    * self.viewport.width  * self.focus_dist;
+        let vrt = self.up      * self.viewport.height * self.focus_dist;
+        let dpt = self.forward * self.focal_len       * self.focus_dist;
 
         self.lower_left_corner = self.origin - hrz*0.5 - vrt*0.5 + dpt;
     }

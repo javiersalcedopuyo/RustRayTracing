@@ -76,22 +76,22 @@ fn main()
 #[cfg(not(debug_assertions))]
     let sample_count = 64;
 
-    let camera_aspect_ratio = (w as f32) / (h as f32);
-    let camera_fov          = 90.0;
-    let camera_aperture     = 2.0;
-    let camera_target       = Vec3::new(0.0, 0.0, 1.0);
-    let camera_pos          = Vec3::new(0.0, 0.0, -1.0);
-    let camera_focus_dist   = (camera_pos - camera_target).norm();
+    let cam_aspect_ratio = (w as f32) / (h as f32);
+    let cam_fov          = 90.0;
+    let cam_aperture     = 0.1;
+    let cam_target       = Vec3::new(0.0, 0.0, 1.0);
+    let cam_pos          = Vec3::new(1.0, 1.0, 0.0);
+    let cam_focus_dist   = (cam_pos - cam_target).norm();
 
     let mut image  = ImagePPM::new_filled(w, h, Vec3::zero());
-    let mut camera = Camera::new(camera_fov, camera_aspect_ratio, camera_aperture, camera_focus_dist);
+    let mut camera = Camera::new(cam_fov, cam_aspect_ratio, cam_aperture, cam_focus_dist);
 
-    camera.move_to( camera_pos );
-    camera.look_at( camera_target );
+    camera.move_to( cam_pos );
+    camera.look_at( cam_target );
 
     let materials: Vec<Rc<dyn Material>> = vec![Rc::new(DebugMat{}),
                                                 Rc::new(LambertianMat{ albedo: Vec3::new(0.0, 0.0, 1.0) }),
-                                                Rc::new(DielectricMat::new(1.5, Vec3::new(0.0, 1.0, 0.0))),
+                                                Rc::new(DielectricMat::new(1.5, Vec3::new(0.5, 1.0, 0.5))),
                                                 Rc::new(MetallicMat::new(0.1, Vec3::new(1.0, 0.0, 0.0))),
                                                 Rc::new(LambertianMat{ albedo: Vec3::new(0.75, 0.75, 0.75) })];
 
