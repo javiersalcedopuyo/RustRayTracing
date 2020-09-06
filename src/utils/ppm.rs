@@ -2,24 +2,20 @@ use std::path::Path;
 use std::io::Write;
 use std::fs::File;
 
-#[derive(Clone)]
-pub struct RGB
-{
-    pub r: u8,
-    pub g: u8,
-    pub b: u8
-}
+use std::vec::Vec as List;
+
+use super::vec3::Vec3;
 
 pub struct ImagePPM
 {
     pub width:  u32,
     pub height: u32,
-    pub pixels: Vec<RGB>
+    pub pixels: List<Vec3>
 }
 
 impl ImagePPM
 {
-    pub fn new_filled(w:u32, h:u32, p:RGB) -> Self
+    pub fn new_filled(w:u32, h:u32, p:Vec3) -> Self
     {
         Self
         {
@@ -31,7 +27,7 @@ impl ImagePPM
 
     pub fn size(&self) -> usize { return self.pixels.len(); }
 
-    pub fn set_pixel(&mut self, x: u32, y: u32, i_val: RGB)
+    pub fn set_pixel(&mut self, x: u32, y: u32, i_val: Vec3)
     {
         let idx = ((y * self.width) + x) as usize;
         self.pixels[idx] = i_val;
@@ -44,9 +40,9 @@ impl ImagePPM
         let mut i = 0;
         for pixel in &self.pixels
         {
-            result[i+0] = pixel.r;
-            result[i+1] = pixel.g;
-            result[i+2] = pixel.b;
+            result[i+0] = (pixel.r() * 255.0).round() as u8;
+            result[i+1] = (pixel.g() * 255.0).round() as u8;
+            result[i+2] = (pixel.b() * 255.0).round() as u8;
 
             i += 3;
             if i >= result.len() { break; }
