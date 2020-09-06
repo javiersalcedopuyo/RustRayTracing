@@ -3,6 +3,7 @@ mod ray;
 mod camera;
 mod hittables;
 mod materials;
+mod rand_scene;
 
 use rand::random;
 use utils::ppm::ImagePPM;
@@ -11,15 +12,8 @@ use ray::Ray;
 use camera::Camera;
 use hittables::hit_record::HitRecord;
 use hittables::{Hittable, Intersectionable};
-use hittables::sphere::Sphere;
-use materials::{Material,
-                debug::DebugMat,
-                lambertian::LambertianMat,
-                metallic::MetallicMat,
-                dielectric::DielectricMat};
 
 use std::time::Instant;
-use std::rc::Rc;
 
 const SHADOW_BIAS: f32 = 0.001;
 
@@ -79,8 +73,8 @@ fn main()
     let cam_aspect_ratio = (w as f32) / (h as f32);
     let cam_fov          = 90.0;
     let cam_aperture     = 0.1;
-    let cam_target       = Vec3::new(0.0, 0.0, 1.0);
-    let cam_pos          = Vec3::new(1.0, 1.0, 0.0);
+    let cam_target       = Vec3::zero();
+    let cam_pos          = Vec3::new(7.5, 2.0, -3.0);
     let cam_focus_dist   = (cam_pos - cam_target).norm();
 
     let mut image  = ImagePPM::new_filled(w, h, Vec3::zero());
@@ -89,23 +83,13 @@ fn main()
     camera.move_to( cam_pos );
     camera.look_at( cam_target );
 
-    let materials: Vec<Rc<dyn Material>> = vec![Rc::new(DebugMat{}),
-                                                Rc::new(LambertianMat{ albedo: Vec3::new(0.0, 0.0, 1.0) }),
-                                                Rc::new(DielectricMat::new(1.5, Vec3::new(0.5, 1.0, 0.5))),
-                                                Rc::new(MetallicMat::new(0.1, Vec3::new(1.0, 0.0, 0.0))),
-                                                Rc::new(LambertianMat{ albedo: Vec3::new(0.75, 0.75, 0.75) })];
-
-    let mut scene: Vec<Intersectionable> = Vec::new();
-    scene.push( Intersectionable::Sphere( Sphere::new(0.5,   Vec3::new(-1.0, 0.0, 1.0),  materials[3].clone()) ) );
-    scene.push( Intersectionable::Sphere( Sphere::new(0.5,   Vec3::new(0.0, 0.0, 1.0),   materials[2].clone()) ) );
-    scene.push( Intersectionable::Sphere( Sphere::new(0.5,   Vec3::new(1.0, 0.0, 1.0),   materials[1].clone()) ) );
-    scene.push( Intersectionable::Sphere( Sphere::new(100.0, Vec3::new(0.0,-100.5, 1.0), materials[4].clone()) ) );
+    let scene = rand_scene::new();
 
     let start = Instant::now();
     for y in 0..h
     {
-        #[cfg(debug_assertions)]
-            println!("Scanline {} / {}", y+1, h);
+#[cfg(debug_assertions)]
+        println!("Scanline {} / {}", y+1, h);
 
         for x in 0..w
         {
