@@ -125,8 +125,8 @@ impl RayTracer
 
                 i_ray = hit.p_material.scatter(&i_ray, &hit, &mut attenuation);
 
-                result  *= attenuation;
-                depth -= 1;
+                result *= attenuation;
+                depth  -= 1;
             }
             else { return result * Self::sample_skybox(&i_ray); }
         }
