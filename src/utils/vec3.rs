@@ -163,7 +163,12 @@ impl Mul<Vec3> for Vec3
 
 impl MulAssign<f32> for Vec3
 {
-    fn mul_assign(&mut self, val: f32) { *self = *self * val; }
+    fn mul_assign(&mut self, val: f32) { *self = *self * val }
+}
+
+impl MulAssign<Vec3> for Vec3
+{
+    fn mul_assign(&mut self, other: Vec3) { *self = *self * other }
 }
 
 impl Div<f32> for Vec3

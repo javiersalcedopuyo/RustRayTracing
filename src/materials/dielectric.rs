@@ -27,8 +27,7 @@ impl Material for DielectricMat
     fn scatter(&self,
                i_ray: &Ray,
                i_record: &HitRecord,
-               o_attenuation: &mut Vec3,
-               o_ray: &mut Ray) -> bool
+               o_attenuation: &mut Vec3) -> Ray
     {
         let eta = if i_record.front_face { 1.0 / self.refraction_idx }
                   else { self.refraction_idx };
@@ -47,8 +46,7 @@ impl Material for DielectricMat
                                     input_ray_dir.refract(i_record.normal, eta)
                                 };
 
-        *o_ray = Ray::new(i_record.position, resulting_ray_dir);
         *o_attenuation = self.albedo;
-        return true;
+        return Ray::new(i_record.position, resulting_ray_dir);
     }
 }

@@ -14,12 +14,10 @@ impl Material for LambertianMat
     fn scatter(&self,
                _i_ray: &Ray,
                i_record: &HitRecord,
-               o_attenuation: &mut Vec3,
-               o_ray: &mut Ray) -> bool
+               o_attenuation: &mut Vec3) -> Ray
     {
         let scatter_dir = i_record.normal + Vec3::rand_unit();
-        *o_ray = Ray::new(i_record.position, scatter_dir);
         *o_attenuation = self.albedo;
-        return true;
+        return Ray::new(i_record.position, scatter_dir);
     }
 }

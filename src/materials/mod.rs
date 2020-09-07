@@ -12,6 +12,5 @@ pub trait Material: std::fmt::Debug
     fn scatter(&self,
                i_ray: &Ray,
                i_record: &HitRecord,
-               o_attenuation: &mut Vec3,
-               o_ray: &mut Ray) -> bool;
+               o_attenuation: &mut Vec3) -> Ray;
 }

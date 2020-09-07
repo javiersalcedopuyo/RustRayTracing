@@ -24,18 +24,15 @@ impl Material for MetallicMat
     fn scatter(&self,
                i_ray: &Ray,
                i_record: &HitRecord,
-               o_attenuation: &mut Vec3,
-               o_ray: &mut Ray) -> bool
+               o_attenuation: &mut Vec3) -> Ray
     {
-        let reflected = i_ray.direction
-                            .normalized()
-                            .reflect( i_record.normal );
+        let reflected  = i_ray.direction
+                             .normalized()
+                             .reflect( i_record.normal );
 
-        let offset = utils::rand_point_in_unit_sphere() * self.roughness;
-
-        *o_ray = Ray::new(i_record.position, reflected + offset);
+        let offset     = utils::rand_point_in_unit_sphere() * self.roughness;
         *o_attenuation = self.albedo;
 
-        return true;
+        return Ray::new(i_record.position, reflected + offset);
     }
 }

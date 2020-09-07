@@ -4,14 +4,31 @@ use super::materials::{Material,
                        lambertian::LambertianMat,
                        metallic::MetallicMat,
                        dielectric::DielectricMat};
-
 use std::rc::Rc;
 
-pub fn new() -> Vec<Intersectionable>
+#[allow(dead_code)]
+pub fn simple() -> Vec<Intersectionable>
 {
     let mut result: Vec<Intersectionable> = Vec::new();
 
-    let ground_mat = Rc::new( LambertianMat{albedo: Vec3::new(0.5, 0.75, 0.0)} );
+    let ground_mat = Rc::new( LambertianMat{ albedo: Vec3::new(0.5, 0.75, 0.0) } );
+    let sphere_mat = Rc::new( LambertianMat{ albedo: Vec3::new(0.5, 0.5, 0.5) } );
+
+    result.push( Intersectionable::Sphere( Sphere::new( 1000.0,
+                                                        Vec3::new(0.0, -1000.0, 0.0),
+                                                        ground_mat.clone()) ) );
+    result.push( Intersectionable::Sphere( Sphere::new( 2.0,
+                                                        Vec3::new(0.0, 2.0, 0.0),
+                                                        sphere_mat.clone()) ) );
+    return result;
+}
+
+#[allow(dead_code)]
+pub fn rand() -> Vec<Intersectionable>
+{
+    let mut result: Vec<Intersectionable> = Vec::new();
+
+    let ground_mat = Rc::new( LambertianMat{ albedo: Vec3::new(0.5, 0.75, 0.0) } );
     result.push( Intersectionable::Sphere( Sphere::new( 1000.0,
                                                         Vec3::new(0.0, -1000.0, 0.0),
                                                         ground_mat.clone()) ) );
