@@ -47,6 +47,6 @@ impl Material for DielectricMat
                                 };
 
         *o_attenuation = self.albedo;
-        return Ray::new(i_record.position, resulting_ray_dir);
+        return Ray::new(i_record.position, resulting_ray_dir, i_ray.time);
     }
 }

@@ -9,12 +9,12 @@ pub struct DebugMat;
 impl Material for DebugMat
 {
     fn scatter(&self,
-               _i_ray: &Ray,
+               i_ray: &Ray,
                i_record: &HitRecord,
                o_attenuation: &mut Vec3) -> Ray
     {
         let scatter_dir = rand_point_in_unit_hemisphere(i_record.normal);
         *o_attenuation  = Vec3::debug_color();
-        return Ray::new(i_record.position, scatter_dir);
+        return Ray::new(i_record.position, scatter_dir, i_ray.time);
     }
 }

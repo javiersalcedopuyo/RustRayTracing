@@ -11,6 +11,8 @@ pub struct Rect
 
 pub struct Camera
 {
+    t0:                f32, // Shutter open time
+    t1:                f32, // Shutter close time
     pub lens_radius:   f32,
     pub focus_dist:    f32,
     pub focal_len:     f32,
@@ -24,7 +26,7 @@ pub struct Camera
 
 impl Camera
 {
-    pub fn new(vfov: f32, aspect_ratio: f32, aperture: f32, focus_dist: f32) -> Self
+    pub fn new(vfov: f32, aspect_ratio: f32, aperture: f32, focus_dist: f32, t0:f32, t1: f32) -> Self
     {
         let h      = (utils::degrees_to_radians(vfov) * 0.5).tan();
         let height = 2.0 * h;
@@ -32,6 +34,7 @@ impl Camera
 
         let mut result = Self
         {
+            t0, t1,
             focus_dist,
             lens_radius: aperture*0.5,
             focal_len  : 1.0,
@@ -83,7 +86,7 @@ impl Camera
         let offset   = self.left * rand_dir.x() + self.up * rand_dir.y();
         let origin   = self.origin + offset;
 
-        return Ray::new(origin, pixel_pos - origin);
+        return Ray::new(origin, pixel_pos - origin, utils::rand_f32_in_range(self.t0, self.t1));
     }
 
     fn recalculate_lower_left_corner(&mut self)

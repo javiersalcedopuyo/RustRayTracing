@@ -9,6 +9,7 @@ const PI:  f32 = 3.1415926535897932385;
 const TAU: f32 = 6.2831853071;
 
 pub fn degrees_to_radians(i_degrees: f32) -> f32 { i_degrees * PI / 180.0 }
+//pub fn radians_to_degrees(i_radians: f32) -> f32 { i_radians * 180.0 / PI }
 
 #[allow(dead_code)]
 pub fn rand_point_in_unit_sphere() -> Vec3

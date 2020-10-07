@@ -11,7 +11,7 @@ use std::time::Instant;
 
 fn main()
 {
-    let raytracer = RayTracer::init();
+    let raytracer = RayTracer::new();
     let start     = Instant::now();
 
     let image     = raytracer.render();

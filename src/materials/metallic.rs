@@ -33,6 +33,6 @@ impl Material for MetallicMat
         let offset     = utils::rand_point_in_unit_sphere() * self.roughness;
         *o_attenuation = self.albedo;
 
-        return Ray::new(i_record.position, reflected + offset);
+        return Ray::new(i_record.position, reflected + offset, i_ray.time);
     }
 }
