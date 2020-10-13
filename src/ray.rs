@@ -10,6 +10,12 @@ pub struct Ray
 
 impl Ray
 {
-    pub fn new(origin: Vec3, direction: Vec3, time: f32) -> Ray { Ray { origin, direction, time } }
+    pub fn new(origin: Vec3, d: Vec3, time: f32) -> Ray
+    {
+        Ray {origin,
+             direction: d.normalized(),
+             time}
+    }
+
     pub fn at(&self, t: f32) -> Vec3 { return self.origin + self.direction * t; }
 }
