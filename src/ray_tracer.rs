@@ -22,10 +22,11 @@ pub struct RayTracer
 impl RayTracer
 {
     // PUBLIC
-    pub fn init() -> Self
+    // TODO: Customizable constructors
+    pub fn new() -> Self
     {
-        let w         = 800;
-        let h         = 600;
+        let w = 800;
+        let h = 600;
 
         #[cfg(debug_assertions)]
             let sample_count = 1;
@@ -38,8 +39,15 @@ impl RayTracer
         let cam_target       = Vec3::zero();
         let cam_pos          = Vec3::new(7.5, 2.0, -3.0);
         let cam_focus_dist   = (cam_pos - cam_target).norm();
+        let cam_shutter_t0   = 0.0;
+        let cam_shutter_t1   = 1.0;
 
-        let mut camera = Camera::new(cam_fov, cam_aspect_ratio, cam_aperture, cam_focus_dist);
+        let mut camera = Camera::new(cam_fov,
+                                     cam_aspect_ratio,
+                                     cam_aperture,
+                                     cam_focus_dist,
+                                     cam_shutter_t0,
+                                     cam_shutter_t1);
 
         camera.move_to( cam_pos );
         camera.look_at( cam_target );
@@ -73,7 +81,7 @@ impl RayTracer
                 for _ in 0..self.sample_count
                 {
                     let offset = if self.sample_count > 1 { random::<f32>() } else { 0.0 };
-                    // NOTE: 0,0 is lower left
+                    // * 0,0 is lower left
                     let u = (x as f32 + offset) / (w-1) as f32;
                     let v = ((h-y) as f32 + offset) / (h-1) as f32;
 
@@ -113,9 +121,10 @@ impl RayTracer
                 if hit.is_none() { continue; }
 
                 let hit = hit.unwrap();
-                let ch  = if closest_hit.is_some() { closest_hit.unwrap() } else { hit.clone() };
+                let ch  = closest_hit.unwrap_or( hit.clone() );
 
-                closest_hit = if hit.distance < ch.distance { Some(hit) } else { Some(ch) };
+                closest_hit = if hit.distance < ch.distance { Some(hit) }
+                              else { Some(ch) };
             }
 
             if closest_hit.is_some()

@@ -12,12 +12,12 @@ pub struct LambertianMat
 impl Material for LambertianMat
 {
     fn scatter(&self,
-               _i_ray: &Ray,
+               i_ray: &Ray,
                i_record: &HitRecord,
                o_attenuation: &mut Vec3) -> Ray
     {
         let scatter_dir = i_record.normal + Vec3::rand_unit();
         *o_attenuation = self.albedo;
-        return Ray::new(i_record.position, scatter_dir);
+        return Ray::new(i_record.position, scatter_dir, i_ray.time);
     }
 }

@@ -1,4 +1,5 @@
 use std::ops::{ Add, AddAssign, Mul, MulAssign, Div, Sub, Neg };
+use float_cmp::approx_eq;
 use super::TAU;
 
 #[derive(Copy, Clone, Debug)]
@@ -43,12 +44,8 @@ impl Vec3
         ]}
     }
 
-    pub fn norm2(&self) -> f32
-    {
-        return self.x() * self.x() + self.y() * self.y() + self.z() * self.z();
-    }
-
-    pub fn norm(&self) -> f32 { return self.norm2().sqrt(); }
+    pub fn norm2(&self)      -> f32  { return self.dot( *self );   }
+    pub fn norm(&self)       -> f32  { return self.norm2().sqrt(); }
     pub fn normalized(&self) -> Self { return *self / self.norm(); }
 
     pub fn lerp(a: Self, b: Self, t: f32) -> Self
@@ -90,6 +87,8 @@ impl Vec3
         return *self - n * self.dot(n) * 2.0;
     }
 
+    // n: Surface normal
+    // eta: Refraction index of the first medium over the second's (ni/nr)
     pub fn refract(&self, n: Vec3, eta: f32) -> Vec3
     {
         let cos_theta    = (-*self).dot(n);
@@ -100,6 +99,7 @@ impl Vec3
     }
 }
 
+// Override operators
 impl Add for Vec3
 {
     type Output = Vec3;
@@ -187,9 +187,88 @@ impl PartialEq for Vec3
 {
     fn eq(&self, other: &Vec3) -> bool
     {
-        self.x() == other.x() &&
-        self.y() == other.y() &&
-        self.z() == other.z()
+        approx_eq!(f32, self.x(), other.x()) &&
+        approx_eq!(f32, self.y(), other.y()) &&
+        approx_eq!(f32, self.z(), other.z())
     }
 }
-impl Eq for Vec3 {}
+
+#[cfg(test)]
+mod tests
+{
+    use super::*;
+
+    #[test]
+    fn normalize()
+    {
+        let norm = Vec3::rand(0.0, 5.0)
+                        .normalized()
+                        .norm();
+
+        assert!( approx_eq!( f32, norm, 1.0 ) );
+    }
+
+    #[test]
+    fn dot_product()
+    {
+        let vec_x = Vec3::new(1.0, 0.0, 0.0);
+        let vec_y = Vec3::new(0.0, 1.0, 0.0);
+
+        assert!( approx_eq!(f32, vec_x.dot( vec_y ), 0.0) );
+        assert!( approx_eq!(f32, vec_x.dot( vec_x ), 1.0) );
+        assert!( approx_eq!(f32, vec_x.dot( -vec_x ), -1.0) );
+    }
+
+    #[test]
+    fn cross_product()
+    {
+        let vec_x = Vec3::new(1.0, 0.0, 0.0);
+        let vec_y = Vec3::new(0.0, 1.0, 0.0);
+        let vec_z = Vec3::new(0.0, 0.0, 1.0);
+
+        assert_eq!( vec_x.cross( vec_y ), vec_z );
+    }
+
+    #[test]
+    fn random_unit_vector()
+    {
+        let vector = Vec3::rand_unit();
+        assert!( approx_eq!(f32, vector.norm(), 1.0) );
+    }
+
+    #[test]
+    fn reflect()
+    {
+        let vec_x = Vec3::new(1.0, 0.0, 0.0);
+        let vec_y = Vec3::new(0.0, 1.0, 0.0);
+        let plane_norm_at_45_degrees = Vec3::new(-1.0, 1.0, 0.0)
+                                        .normalized();
+
+        assert_eq!( vec_x.reflect( -vec_x ), -vec_x );
+        assert_eq!( vec_x.reflect( plane_norm_at_45_degrees ), vec_y );
+    }
+
+    #[test]
+    #[ignore] // FIXME
+    fn refract()
+    {
+        let normal   = Vec3::new(-1.0, 0.0, 0.0);
+        let inciding = Vec3::new(1.0, 1.0, 0.0)
+                        .normalized();
+
+        let eta_1 = 1.0;
+        let eta_2 = 1.0 / 1.5;
+
+        // No refraction
+        assert_eq!( inciding.refract( normal, eta_1 ), inciding );
+        // 28.1255 degree refraction
+        let refracted = inciding.refract( normal, eta_2 )
+                                .normalized();
+
+        let cos_angle = inciding.dot( refracted );
+        let expected  = (28.1255 as f32).cos();
+
+        println!("TRACE! Actual: {} vs Expected: {}", cos_angle, expected);
+        assert!( approx_eq!( f32, cos_angle, expected ) );
+    }
+}
