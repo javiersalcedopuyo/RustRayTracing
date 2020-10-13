@@ -1,5 +1,7 @@
 # RUST RAY TRACING
 
+![master build](https://github.com/javiersalcedopuyo/RustRayTracing/workflows/Unit%20Testing/badge.svg)
+
 As part of the [100 days of code](https://www.100daysofcode.com/) challenge, I'm implementing Peter Shirley's Ray Tracing
 book series on Rust.
 
