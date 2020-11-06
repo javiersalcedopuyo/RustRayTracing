@@ -71,4 +71,9 @@ impl Hittable for Sphere
 
         return None
     }
+
+    fn get_updated_position(&self, _i_time: f32) -> Vec3
+    {
+        return self.center;
+    }
 }

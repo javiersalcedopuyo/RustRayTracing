@@ -2,7 +2,6 @@ use rand::random;
 use super::scene_generator;
 use super::ray::Ray;
 use super::hittables::{ Hittable,
-                        Intersectionable,
                         hit_record::HitRecord };
 use super::camera::{ Rect, Camera };
 use super::utils::{ vec3::Vec3,
@@ -16,7 +15,7 @@ pub struct RayTracer
     sample_count: i32,
     output_size:  Rect,
     camera:       Camera,
-    scene:        Vec<Intersectionable>
+    scene:        Vec<Box<dyn Hittable>>
 }
 
 impl RayTracer
@@ -106,7 +105,7 @@ impl RayTracer
         return Vec3::lerp(Vec3::one()*0.75, Vec3::new(0.0, 0.3, 1.0), t);
     }
 
-    fn compute_ray(&self, mut i_ray: Ray, i_scene: &Vec<Intersectionable>) -> Vec3
+    fn compute_ray(&self, mut i_ray: Ray, i_scene: &Vec<Box<dyn Hittable>>) -> Vec3
     {
         let mut depth  = MAX_DEPTH;
         let mut result = Vec3::one();

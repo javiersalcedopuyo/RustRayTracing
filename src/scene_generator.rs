@@ -1,5 +1,5 @@
-use super::utils::{vec3::Vec3};
-use super::hittables::{ Intersectionable, sphere::Sphere};
+use super::utils::vec3::Vec3;
+use super::hittables::{Hittable, sphere::Sphere};
 use super::materials::{Material,
                        lambertian::LambertianMat,
                        metallic::MetallicMat,
@@ -7,31 +7,34 @@ use super::materials::{Material,
 use std::rc::Rc;
 
 #[allow(dead_code)]
-pub fn simple() -> Vec<Intersectionable>
+pub fn simple() -> Vec<Box<dyn Hittable>>
 {
-    let mut result: Vec<Intersectionable> = Vec::new();
+    let mut result: Vec<Box<dyn Hittable>> = Vec::new();
 
     let ground_mat = Rc::new( LambertianMat{ albedo: Vec3::new(0.5, 0.75, 0.0) } );
     let sphere_mat = Rc::new( LambertianMat{ albedo: Vec3::new(0.5, 0.5, 0.5) } );
 
-    result.push( Intersectionable::Sphere( Sphere::new( 1000.0,
-                                                        Vec3::new(0.0, -1000.0, 0.0),
-                                                        ground_mat.clone()) ) );
-    result.push( Intersectionable::Sphere( Sphere::new( 2.0,
-                                                        Vec3::new(0.0, 2.0, 0.0),
-                                                        sphere_mat.clone()) ) );
+    result.push(
+        Box::new(
+            Sphere::new( 1000.0, Vec3::new(0.0, -1000.0, 0.0), ground_mat.clone() )));
+
+    result.push(
+        Box::new(
+            Sphere::new( 2.0, Vec3::new(0.0, 2.0, 0.0), sphere_mat.clone() )));
+
     return result;
 }
 
 #[allow(dead_code)]
-pub fn rand() -> Vec<Intersectionable>
+pub fn rand() -> Vec<Box<dyn Hittable>>
 {
-    let mut result: Vec<Intersectionable> = Vec::new();
+    let mut result: Vec<Box<dyn Hittable>> = Vec::new();
 
     let ground_mat = Rc::new( LambertianMat{ albedo: Vec3::new(0.5, 0.75, 0.0) } );
-    result.push( Intersectionable::Sphere( Sphere::new( 1000.0,
-                                                        Vec3::new(0.0, -1000.0, 0.0),
-                                                        ground_mat.clone()) ) );
+
+    result.push(
+        Box::new(
+            Sphere::new( 1000.0, Vec3::new(0.0, -1000.0, 0.0), ground_mat.clone() )));
 
     for a in -11..11 {
         for b in -11..11
@@ -64,18 +67,18 @@ pub fn rand() -> Vec<Intersectionable>
                 new_mat = Rc::new( DielectricMat::new(1.5, albedo) );
             }
 
-            result.push( Intersectionable::Sphere( Sphere::new(0.2, center, new_mat) ) );
+            result.push( Box::new( Sphere::new(0.2, center, new_mat) ) );
         }
     }
 
     let material1 = Rc::new( DielectricMat::new( 1.5, Vec3::one()) );
-    result.push( Intersectionable::Sphere( Sphere::new(1.0, Vec3::new(0.0, 1.0, 0.0), material1) ) );
+    result.push( Box::new( Sphere::new(1.0, Vec3::new(0.0, 1.0, 0.0), material1) ) );
 
     let material2 = Rc::new( LambertianMat{ albedo: Vec3::new(0.4, 0.2, 0.1) } );
-    result.push( Intersectionable::Sphere( Sphere::new(1.0, Vec3::new(-4.0, 1.0, 0.0), material2) ) );
+    result.push( Box::new( Sphere::new(1.0, Vec3::new(-4.0, 1.0, 0.0), material2) ) );
 
     let material3 = Rc::new( MetallicMat::new(0.0, Vec3::new(0.7, 0.6, 0.5) ) );
-    result.push( Intersectionable::Sphere( Sphere::new(1.0, Vec3::new(4.0, 1.0, 0.0), material3) ) );
+    result.push( Box::new( Sphere::new(1.0, Vec3::new(4.0, 1.0, 0.0), material3) ) );
 
     return result;
 }
